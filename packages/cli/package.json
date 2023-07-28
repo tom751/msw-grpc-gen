@@ -4,7 +4,7 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "tsx index.ts"
+    "start": "tsx index.ts ../example/pb/**.client.ts"
   },
   "devDependencies": {
     "@types/node": "^20.4.5",
