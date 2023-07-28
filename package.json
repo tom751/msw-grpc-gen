@@ -1,0 +1,15 @@
+{
+  "name": "msw-grpc-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "rome check . && rome format . --write"
+  },
+  "devDependencies": {
+    "rome": "12.1.3"
+  }
+}

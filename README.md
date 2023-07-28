@@ -1,0 +1,2 @@
+# MSW GRPC mock generator
+

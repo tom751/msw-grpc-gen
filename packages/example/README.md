@@ -1,0 +1,1 @@
+This directory has an example protobuf file with the corresponding generated protobuf-ts types.
