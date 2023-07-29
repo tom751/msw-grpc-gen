@@ -4,9 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "gen": "protoc --ts_out ./pb --proto_path . example.proto"
+    "start": "tsx server.ts",
+    "gen": "protoc --ts_opt server_grpc1 --ts_out ./pb --proto_path . example.proto"
   },
   "dependencies": {
-    "@protobuf-ts/plugin": "^2.9.0"
+    "@protobuf-ts/plugin": "^2.9.0",
+    "@grpc/grpc-js": "1.8.21"
   }
 }
