@@ -1,14 +1,24 @@
 {
   "name": "example",
+  "private": "true",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "start": "tsx server.ts",
-    "gen": "protoc --ts_opt server_grpc1 --ts_out ./pb --proto_path . example.proto"
+    "dev:server": "tsx watch server.ts",
+    "gen": "protoc --ts_opt server_grpc1 --ts_out ./pb --proto_path . example.proto",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@protobuf-ts/plugin": "^2.9.0",
-    "@grpc/grpc-js": "1.8.21"
+    "@grpc/grpc-js": "1.8.21",
+    "@protobuf-ts/grpcweb-transport": "^2.9.0",
+    "@protobuf-ts/plugin": "^2.9.0"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
   }
 }
