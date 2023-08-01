@@ -1,7 +1,12 @@
 import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport'
 
 import { UserServiceClient } from '../pb/example.client'
+import { worker } from './mocks/browser'
 import './style.css'
+
+if (process.env.NODE_ENV === 'development') {
+  worker.start()
+}
 
 const pre = document.querySelector<HTMLPreElement>('#user')
 const fetchButton = document.querySelector<HTMLButtonElement>('#fetch-btn')
