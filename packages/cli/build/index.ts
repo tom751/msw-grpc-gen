@@ -57,7 +57,7 @@ function createHandlers(serviceEndpoints: ServiceEndpoint[]): ts.VariableStateme
               ),
               factory.createCallExpression(
                 factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'json'),
-                undefined,
+                [factory.createTypeReferenceNode(se.resType)],
                 // TODO - build response and pass here instead of undefined
                 [factory.createObjectLiteralExpression(undefined, true)],
               ),

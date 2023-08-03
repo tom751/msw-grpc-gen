@@ -2,7 +2,7 @@ import { program } from 'commander'
 import fg from 'fast-glob'
 import fs from 'fs'
 import path from 'path'
-import { generate } from './build/generate'
+import { generateHandlers } from './build/handlers'
 import { getFilename } from './utils/files'
 
 program
@@ -29,7 +29,7 @@ interface Options {
 
 const options = program.opts<Options>()
 for (const file of clientFiles) {
-  const output = generate(file)
+  const output = generateHandlers(file)
   if (!output) {
     continue
   }

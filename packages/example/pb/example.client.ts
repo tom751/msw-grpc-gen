@@ -4,6 +4,7 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { UserService } from "./example";
+import type { CreateUserRequest } from "./example";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { User } from "./example";
 import type { GetUserRequest } from "./example";
@@ -17,6 +18,10 @@ export interface IUserServiceClient {
      * @generated from protobuf rpc: GetUser(GetUserRequest) returns (User);
      */
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, User>;
+    /**
+     * @generated from protobuf rpc: Createuser(CreateUserRequest) returns (User);
+     */
+    createuser(input: CreateUserRequest, options?: RpcOptions): UnaryCall<CreateUserRequest, User>;
 }
 /**
  * @generated from protobuf service UserService
@@ -33,5 +38,12 @@ export class UserServiceClient implements IUserServiceClient, ServiceInfo {
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, User> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetUserRequest, User>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: Createuser(CreateUserRequest) returns (User);
+     */
+    createuser(input: CreateUserRequest, options?: RpcOptions): UnaryCall<CreateUserRequest, User> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateUserRequest, User>("unary", this._transport, method, opt, input);
     }
 }

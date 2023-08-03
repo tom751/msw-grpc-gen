@@ -5,11 +5,11 @@ import { findClientInterface, getServiceEndpoints } from '../parse'
 import { getFilename } from '../utils/files'
 
 /**
- * Generate mock file for specific GRPC client
+ * Generate MSW handlers for specific GRPC client
  * @param filepath The filepath to the GRPC client to create mocks for
  * @returns String content of the mock file
  */
-export function generate(filepath: string): string {
+export function generateHandlers(filepath: string): string {
   const sourceFile = ts.createSourceFile(
     filepath,
     fs.readFileSync(filepath, { encoding: 'utf-8' }),
