@@ -1,15 +1,15 @@
 import fs from 'fs'
 import ts from 'typescript'
 import { build } from '.'
-import { findClientInterface, getServiceEndpoints } from '../parse'
-import { getFilename } from '../utils/files'
+import { findClientInterface, getReturnTypeImports, getServiceEndpoints } from '../parse'
 
 /**
  * Generate MSW handlers for specific GRPC client
  * @param filepath The filepath to the GRPC client to create mocks for
+ * @param outDirPath The path to the folder the files are being output to
  * @returns String content of the mock file
  */
-export function generateHandlers(filepath: string): string {
+export function generateHandlers(filepath: string, outDirPath: string): string {
   const sourceFile = ts.createSourceFile(
     filepath,
     fs.readFileSync(filepath, { encoding: 'utf-8' }),
@@ -23,10 +23,10 @@ export function generateHandlers(filepath: string): string {
   }
 
   const serviceEndpoints = getServiceEndpoints(clientInterface)
-  const nodes = build(serviceEndpoints)
+  const endPointsWithTypePaths = getReturnTypeImports(serviceEndpoints, sourceFile)
+  const nodes = build(endPointsWithTypePaths, outDirPath)
 
-  const mockFilename = `${getFilename(filepath)}.ts`
-  const mockFile = ts.createSourceFile(mockFilename, '', ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS)
+  const mockFile = ts.createSourceFile('service-file', '', ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS)
   const printer = ts.createPrinter()
 
   return printer.printList(ts.ListFormat.MultiLine, nodes, mockFile)

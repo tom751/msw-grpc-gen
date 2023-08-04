@@ -28,13 +28,16 @@ interface Options {
 }
 
 const options = program.opts<Options>()
+const out = path.resolve(options.out)
+
 for (const file of clientFiles) {
-  const output = generateHandlers(file)
+  const output = generateHandlers(file, out)
   if (!output) {
     continue
   }
 
-  const mockFilename = `${getFilename(file)}.ts`
+  const fileName = getFilename(file)
+  const mockFilename = `${fileName}.ts`
   const outputDir = path.join(__dirname, options.out, mockFilename)
 
   fs.writeFileSync(outputDir, output)

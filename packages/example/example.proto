@@ -2,7 +2,7 @@ syntax = "proto3";
 
 service UserService {
   rpc GetUser (GetUserRequest) returns (User);
-  rpc Createuser (CreateUserRequest) returns (User);
+  rpc Createuser (CreateUserRequest) returns (CreateUserResponse);
 }
 
 message GetUserRequest {
@@ -14,6 +14,10 @@ message CreateUserRequest {
   string second_name = 2;
   string email = 3;
   int32 age = 4;
+}
+
+message CreateUserResponse {
+  string message = 1;
 }
 
 message User {

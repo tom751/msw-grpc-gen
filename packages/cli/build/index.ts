@@ -1,15 +1,18 @@
+import path from 'path'
 import ts, { factory } from 'typescript'
 import { ServiceEndpoint } from '../parse'
 
 /**
  * Builds an AST for mocking GRPC endpoints with MSW
  * @param serviceEndpoints The GRPC endpoints
+ * @param outDirPath The path to the folder the files are being output to
  * @returns AST to print
  */
-export function build(serviceEndpoints: ServiceEndpoint[]): ts.NodeArray<ts.Node> {
+export function build(serviceEndpoints: ServiceEndpoint[], outDirPath: string): ts.NodeArray<ts.Node> {
   const handlers = createHandlers(serviceEndpoints)
   const mswImportDec = createMswImportDec()
-  return factory.createNodeArray([mswImportDec, createNewLine(), handlers])
+  const responseTypeImportDecs = createResponseTypeImportDecs(serviceEndpoints, outDirPath)
+  return factory.createNodeArray([mswImportDec, ...responseTypeImportDecs, createNewLine(), handlers])
 }
 
 /**
@@ -34,6 +37,47 @@ function createMswImportDec(): ts.ImportDeclaration {
     ),
     factory.createStringLiteral('msw', true),
   )
+}
+
+/**
+ * Creates and returns AST node(s) for the response type of the various service endpoints
+ * @param serviceEndpoints An array of GRPC endpoints that need response types imported
+ * @param outDirPath The path to the folder the files are being output to
+ * @returns Array of ImportDeclarations for the corresponding types
+ */
+function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDirPath: string): ts.ImportDeclaration[] {
+  // Group by import path
+  const groupByImportPath = serviceEndpoints.reduce(
+    (group: Map<string, string[]>, serviceEndpoint: ServiceEndpoint) => {
+      const existingGroup = group.get(serviceEndpoint.resImportPath) || []
+      group.set(serviceEndpoint.resImportPath, [...existingGroup, serviceEndpoint.resType])
+      return group
+    },
+    new Map<string, string[]>(),
+  )
+
+  const result: ts.ImportDeclaration[] = []
+
+  for (const [key, value] of groupByImportPath) {
+    const sortedTypes = [...value].sort((a, b) => a.localeCompare(b))
+    const relativePath = path.relative(outDirPath, key)
+
+    result.push(
+      factory.createImportDeclaration(
+        undefined,
+        factory.createImportClause(
+          true,
+          undefined,
+          factory.createNamedImports(
+            sortedTypes.map((t) => factory.createImportSpecifier(false, undefined, factory.createIdentifier(t))),
+          ),
+        ),
+        factory.createStringLiteral(relativePath, true),
+      ),
+    )
+  }
+
+  return result
 }
 
 /**

@@ -43,6 +43,15 @@ export interface CreateUserRequest {
     age: number;
 }
 /**
+ * @generated from protobuf message CreateUserResponse
+ */
+export interface CreateUserResponse {
+    /**
+     * @generated from protobuf field: string message = 1;
+     */
+    message: string;
+}
+/**
  * @generated from protobuf message User
  */
 export interface User {
@@ -175,6 +184,53 @@ class CreateUserRequest$Type extends MessageType<CreateUserRequest> {
  */
 export const CreateUserRequest = new CreateUserRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class CreateUserResponse$Type extends MessageType<CreateUserResponse> {
+    constructor() {
+        super("CreateUserResponse", [
+            { no: 1, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateUserResponse>): CreateUserResponse {
+        const message = { message: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<CreateUserResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateUserResponse): CreateUserResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string message */ 1:
+                    message.message = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateUserResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string message = 1; */
+        if (message.message !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.message);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message CreateUserResponse
+ */
+export const CreateUserResponse = new CreateUserResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class User$Type extends MessageType<User> {
     constructor() {
         super("User", [
@@ -240,5 +296,5 @@ export const User = new User$Type();
  */
 export const UserService = new ServiceType("UserService", [
     { name: "GetUser", options: {}, I: GetUserRequest, O: User },
-    { name: "Createuser", options: {}, I: CreateUserRequest, O: User }
+    { name: "Createuser", options: {}, I: CreateUserRequest, O: CreateUserResponse }
 ]);
