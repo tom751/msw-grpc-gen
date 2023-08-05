@@ -100,7 +100,6 @@ export function getReturnTypeImports(endpoints: ServiceEndpoint[], sourceFile: t
     const resImportPath = imports[e.resType]
 
     if (!resImportPath) {
-      // check this doesn't break primitive return types
       throw new Error(`Could not find import for ${e.resType}`)
     }
 

@@ -2,7 +2,7 @@ import { program } from 'commander'
 import fg from 'fast-glob'
 import fs from 'fs'
 import path from 'path'
-import { generateHandlers } from './build/handlers'
+import { generateHandlers } from './build'
 import { getFilename } from './utils/files'
 
 program
