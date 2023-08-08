@@ -1,15 +1,21 @@
 import path from 'path'
 import ts, { factory } from 'typescript'
 import { ServiceEndpoint } from '../parse'
+import { getObjectAstPlaceholder } from './object'
 
 /**
  * Builds an AST for mocking GRPC endpoints with MSW
  * @param serviceEndpoints The GRPC endpoints
  * @param outDirPath The path to the folder the files are being output to
+ * @param checker Type checker
  * @returns AST to print
  */
-export function getHandlersAST(serviceEndpoints: ServiceEndpoint[], outDirPath: string): ts.NodeArray<ts.Node> {
-  const handlers = createHandlers(serviceEndpoints)
+export function getHandlersAST(
+  serviceEndpoints: ServiceEndpoint[],
+  outDirPath: string,
+  checker: ts.TypeChecker,
+): ts.NodeArray<ts.Node> {
+  const handlers = createHandlers(serviceEndpoints, checker)
   const mswImportDec = createMswImportDec()
   const responseTypeImportDecs = createResponseTypeImportDecs(serviceEndpoints, outDirPath)
   return factory.createNodeArray([mswImportDec, ...responseTypeImportDecs, createNewLine(), handlers])
@@ -50,7 +56,7 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
   const groupByImportPath = serviceEndpoints.reduce(
     (group: Map<string, string[]>, serviceEndpoint: ServiceEndpoint) => {
       const existingGroup = group.get(serviceEndpoint.resImportPath) || []
-      group.set(serviceEndpoint.resImportPath, [...existingGroup, serviceEndpoint.resType])
+      group.set(serviceEndpoint.resImportPath, [...existingGroup, serviceEndpoint.resTypeName])
       return group
     },
     new Map<string, string[]>(),
@@ -83,12 +89,14 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
 /**
  * Creates and returns an AST node for an MSW handler array for GRPC endpoints
  * @param serviceEndpoints An array of GRPC endpoints to create MSW handlers for
+ * @param checker Type checker
  * @returns VariableStatement AST node of a handler array
  */
-function createHandlers(serviceEndpoints: ServiceEndpoint[]): ts.VariableStatement {
+function createHandlers(serviceEndpoints: ServiceEndpoint[], checker: ts.TypeChecker): ts.VariableStatement {
   const handlerArray = factory.createArrayLiteralExpression(
     serviceEndpoints.map((se) => {
       const propertyAccessExpression = factory.createPropertyAccessExpression(factory.createIdentifier('rest'), 'post')
+      const responseArgumentsArray = se.resTypeNode ? [getObjectAstPlaceholder(se.resTypeNode, checker)] : []
 
       const functionBody = factory.createBlock(
         [
@@ -101,9 +109,8 @@ function createHandlers(serviceEndpoints: ServiceEndpoint[]): ts.VariableStateme
               ),
               factory.createCallExpression(
                 factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'json'),
-                [factory.createTypeReferenceNode(se.resType)],
-                // TODO - build response and pass here instead of undefined
-                [factory.createObjectLiteralExpression(undefined, true)],
+                [factory.createTypeReferenceNode(se.resTypeName)],
+                responseArgumentsArray,
               ),
             ]),
           ),

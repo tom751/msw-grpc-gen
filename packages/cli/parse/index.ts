@@ -16,22 +16,24 @@ export function findClientInterface(node: ts.Node): ts.InterfaceDeclaration | un
 
 export interface ServiceEndpoint {
   name: string
-  reqType: string
-  resType: string
+  reqTypeName: string
+  resTypeName: string
+  resTypeNode?: ts.Type
   resImportPath: string
 }
 
 /**
  * Return an array of GRPC service endpoints from an interface
  * @param node A TypeScript interface declaration
+ * @param checker Type checker
  * @returns An array of GRPC service endpoints
  */
-export function getServiceEndpoints(node: ts.InterfaceDeclaration): ServiceEndpoint[] {
+export function getServiceEndpoints(node: ts.InterfaceDeclaration, checker: ts.TypeChecker): ServiceEndpoint[] {
   return node.members.filter(ts.isMethodSignature).map((m: ts.MethodSignature) => {
     const endpoint: ServiceEndpoint = {
       name: '',
-      reqType: '',
-      resType: '',
+      reqTypeName: '',
+      resTypeName: '',
       resImportPath: '',
     }
 
@@ -47,13 +49,14 @@ export function getServiceEndpoints(node: ts.InterfaceDeclaration): ServiceEndpo
     ) {
       const req = m.type.typeArguments[0]
       const res = m.type.typeArguments[1]
+      endpoint.resTypeNode = checker.getTypeFromTypeNode(res)
 
       if (ts.isIdentifier(req.typeName)) {
-        endpoint.reqType = req.typeName.text
+        endpoint.reqTypeName = req.typeName.text
       }
 
       if (ts.isIdentifier(res.typeName)) {
-        endpoint.resType = res.typeName.text
+        endpoint.resTypeName = res.typeName.text
       }
     }
 
@@ -97,10 +100,10 @@ export function getReturnTypeImports(endpoints: ServiceEndpoint[], sourceFile: t
   }
 
   return [...endpoints].map((e) => {
-    const resImportPath = imports[e.resType]
+    const resImportPath = imports[e.resTypeName]
 
     if (!resImportPath) {
-      throw new Error(`Could not find import for ${e.resType}`)
+      throw new Error(`Could not find import for ${e.resTypeName}`)
     }
 
     return {

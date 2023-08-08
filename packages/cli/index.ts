@@ -2,6 +2,7 @@ import { program } from 'commander'
 import fg from 'fast-glob'
 import fs from 'fs'
 import path from 'path'
+import ts from 'typescript'
 import { generateHandlers } from './build'
 import { getFilename } from './utils/files'
 
@@ -30,8 +31,14 @@ interface Options {
 const options = program.opts<Options>()
 const out = path.resolve(options.out)
 
+const tsOpts: ts.CompilerOptions = {
+  target: ts.ScriptTarget.ESNext,
+}
+const host = ts.createCompilerHost(tsOpts, true)
+const prog = ts.createProgram(clientFiles, tsOpts, host)
+
 for (const file of clientFiles) {
-  const output = generateHandlers(file, out)
+  const output = generateHandlers(file, out, prog)
   if (!output) {
     continue
   }
