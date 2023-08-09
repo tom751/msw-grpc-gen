@@ -1,5 +1,4 @@
 import { program } from 'commander'
-import fg from 'fast-glob'
 import fs from 'fs'
 import path from 'path'
 import ts from 'typescript'
@@ -18,7 +17,7 @@ if (program.args.length < 1) {
   process.exit(1)
 }
 
-const clientFiles = fg.sync(program.args[0])
+const clientFiles = program.args
 if (clientFiles.length === 0) {
   console.log('No files found')
   process.exit()
