@@ -66,6 +66,7 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
 
   for (const [key, value] of groupByImportPath) {
     const sortedTypes = [...value].sort((a, b) => a.localeCompare(b))
+    const dedupedTypes = [...new Set(sortedTypes)]
     const relativePath = path.relative(outDirPath, key)
 
     result.push(
@@ -75,7 +76,7 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
           true,
           undefined,
           factory.createNamedImports(
-            sortedTypes.map((t) => factory.createImportSpecifier(false, undefined, factory.createIdentifier(t))),
+            dedupedTypes.map((t) => factory.createImportSpecifier(false, undefined, factory.createIdentifier(t))),
           ),
         ),
         factory.createStringLiteral(relativePath, true),
