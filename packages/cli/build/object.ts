@@ -81,6 +81,8 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
       properties.push(factory.createPropertyAssignment(prop.name, factory.createStringLiteral(defaultVal, true)))
     } else if (propTypeNode.kind === ts.SyntaxKind.NumberKeyword) {
       properties.push(factory.createPropertyAssignment(prop.name, factory.createNumericLiteral(defaultVal)))
+    } else if (propTypeNode.kind === ts.SyntaxKind.BigIntKeyword) {
+      properties.push(factory.createPropertyAssignment(prop.name, factory.createBigIntLiteral(defaultVal)))
     } else if (propTypeNode.kind === ts.SyntaxKind.BooleanKeyword) {
       properties.push(factory.createPropertyAssignment(prop.name, factory.createFalse()))
     } else if (propTypeNode.kind === ts.SyntaxKind.ArrayType) {
@@ -95,6 +97,7 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
 const defaultVals: Record<number, any> = {
   [ts.SyntaxKind.StringKeyword]: '',
   [ts.SyntaxKind.NumberKeyword]: 0,
+  [ts.SyntaxKind.BigIntKeyword]: '0n',
   [ts.SyntaxKind.BooleanKeyword]: false,
   [ts.SyntaxKind.ArrayType]: [],
 }
