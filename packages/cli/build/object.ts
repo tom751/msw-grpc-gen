@@ -67,8 +67,11 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
             factory.createNewExpression(factory.createIdentifier(typeAsString), [], []),
           ),
         )
+      } else if ((propType.flags & ts.TypeFlags.EnumLiteral) === ts.TypeFlags.EnumLiteral) {
+        // It's an enum - select first by default
+        properties.push(factory.createPropertyAssignment(prop.name, factory.createNumericLiteral(0)))
       } else {
-        // it's an object
+        // It's an object
         properties.push(factory.createPropertyAssignment(prop.name, getObjectAstPlaceholder(propType, checker)))
       }
 
