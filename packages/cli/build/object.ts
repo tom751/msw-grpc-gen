@@ -23,6 +23,8 @@ export function getObjectPlaceholder(type: ts.Type, checker: ts.TypeChecker): Ob
 
       if (typeAsString === 'Date') {
         result[prop.name] = new Date()
+      } else if (typeAsString === 'Uint8Array') {
+        result[prop.name] = new Uint8Array()
       } else {
         // it's an object
         result[prop.name] = getObjectPlaceholder(propType, checker)
@@ -58,11 +60,11 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
     if (propTypeNode.kind === ts.SyntaxKind.TypeReference) {
       const typeAsString = checker.symbolToString(propType.symbol)
 
-      if (typeAsString === 'Date') {
+      if (typeAsString === 'Date' || typeAsString === 'Uint8Array') {
         properties.push(
           factory.createPropertyAssignment(
             prop.name,
-            factory.createNewExpression(factory.createIdentifier('Date'), [], []),
+            factory.createNewExpression(factory.createIdentifier(typeAsString), [], []),
           ),
         )
       } else {
