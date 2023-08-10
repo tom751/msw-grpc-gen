@@ -80,17 +80,28 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
 
     const defaultVal = defaultVals[propTypeNode.kind]
 
-    if (propTypeNode.kind === ts.SyntaxKind.StringKeyword) {
-      properties.push(factory.createPropertyAssignment(prop.name, factory.createStringLiteral(defaultVal, true)))
-    } else if (propTypeNode.kind === ts.SyntaxKind.NumberKeyword) {
-      properties.push(factory.createPropertyAssignment(prop.name, factory.createNumericLiteral(defaultVal)))
-    } else if (propTypeNode.kind === ts.SyntaxKind.BigIntKeyword) {
-      properties.push(factory.createPropertyAssignment(prop.name, factory.createBigIntLiteral(defaultVal)))
-    } else if (propTypeNode.kind === ts.SyntaxKind.BooleanKeyword) {
-      properties.push(factory.createPropertyAssignment(prop.name, factory.createFalse()))
-    } else if (propTypeNode.kind === ts.SyntaxKind.ArrayType) {
-      properties.push(factory.createPropertyAssignment(prop.name, factory.createArrayLiteralExpression(defaultVal)))
+    // default to empty object - works for maps
+    let initializer: ts.Expression = factory.createObjectLiteralExpression()
+
+    switch (propTypeNode.kind) {
+      case ts.SyntaxKind.StringKeyword:
+        initializer = factory.createStringLiteral(defaultVal, true)
+        break
+      case ts.SyntaxKind.NumberKeyword:
+        initializer = factory.createNumericLiteral(defaultVal)
+        break
+      case ts.SyntaxKind.BigIntKeyword:
+        initializer = factory.createBigIntLiteral(defaultVal)
+        break
+      case ts.SyntaxKind.BooleanKeyword:
+        initializer = factory.createFalse()
+        break
+      case ts.SyntaxKind.ArrayType:
+        factory.createArrayLiteralExpression(defaultVal)
+        break
     }
+
+    properties.push(factory.createPropertyAssignment(prop.name, initializer))
   }
 
   return factory.createObjectLiteralExpression(properties, true)
