@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "lint": "rome check . && rome format . --write",
+    "lint:ci": "rome ci .",
     "test": "npm t --workspaces --if-present"
   },
   "devDependencies": {

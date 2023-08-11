@@ -4,7 +4,7 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "tsx index.ts -o ../example/src/mocks ../example/pb/**.client.ts",
+    "start": "tsx index.ts -o ../example/src/mocks/gen ../example/pb/**.client.ts",
     "test": "vitest"
   },
   "devDependencies": {

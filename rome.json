@@ -14,7 +14,14 @@
     "lineWidth": 120
   },
   "files": {
-    "ignore": ["**/pb/**", ".vscode", "**/snapshots/**", "mockServiceWorker.js", "node_modules"]
+    "ignore": [
+      "**/pb/**",
+      ".vscode",
+      "**/snapshots/**",
+      "mockServiceWorker.js",
+      "node_modules",
+      "packages/example/src/mocks/gen"
+    ]
   },
   "javascript": {
     "formatter": {
