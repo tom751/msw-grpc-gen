@@ -50,6 +50,20 @@ export interface CreateUserResponse {
      * @generated from protobuf field: string message = 1;
      */
     message: string;
+    /**
+     * @generated from protobuf field: bytes image = 2;
+     */
+    image: Uint8Array;
+    /**
+     * @generated from protobuf field: Status status = 3;
+     */
+    status: Status;
+    /**
+     * @generated from protobuf field: map<string, User> users = 4;
+     */
+    users: {
+        [key: string]: User;
+    };
 }
 /**
  * @generated from protobuf message User
@@ -67,6 +81,31 @@ export interface User {
      * @generated from protobuf field: int32 age = 3;
      */
     age: number;
+    /**
+     * @generated from protobuf field: bool active = 4;
+     */
+    active: boolean;
+    /**
+     * @generated from protobuf field: int64 amount = 5;
+     */
+    amount: bigint;
+}
+/**
+ * @generated from protobuf enum Status
+ */
+export enum Status {
+    /**
+     * @generated from protobuf enum value: STATUS_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: STATUS_OK = 1;
+     */
+    OK = 1,
+    /**
+     * @generated from protobuf enum value: STATUS_ERROR = 2;
+     */
+    ERROR = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetUserRequest$Type extends MessageType<GetUserRequest> {
@@ -187,11 +226,14 @@ export const CreateUserRequest = new CreateUserRequest$Type();
 class CreateUserResponse$Type extends MessageType<CreateUserResponse> {
     constructor() {
         super("CreateUserResponse", [
-            { no: 1, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "image", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+            { no: 3, name: "status", kind: "enum", T: () => ["Status", Status, "STATUS_"] },
+            { no: 4, name: "users", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => User } }
         ]);
     }
     create(value?: PartialMessage<CreateUserResponse>): CreateUserResponse {
-        const message = { message: "" };
+        const message = { message: "", image: new Uint8Array(0), status: 0, users: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CreateUserResponse>(this, message, value);
@@ -205,6 +247,15 @@ class CreateUserResponse$Type extends MessageType<CreateUserResponse> {
                 case /* string message */ 1:
                     message.message = reader.string();
                     break;
+                case /* bytes image */ 2:
+                    message.image = reader.bytes();
+                    break;
+                case /* Status status */ 3:
+                    message.status = reader.int32();
+                    break;
+                case /* map<string, User> users */ 4:
+                    this.binaryReadMap4(message.users, reader, options);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -216,10 +267,39 @@ class CreateUserResponse$Type extends MessageType<CreateUserResponse> {
         }
         return message;
     }
+    private binaryReadMap4(map: CreateUserResponse["users"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof CreateUserResponse["users"] | undefined, val: CreateUserResponse["users"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = User.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field CreateUserResponse.users");
+            }
+        }
+        map[key ?? ""] = val ?? User.create();
+    }
     internalBinaryWrite(message: CreateUserResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string message = 1; */
         if (message.message !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.message);
+        /* bytes image = 2; */
+        if (message.image.length)
+            writer.tag(2, WireType.LengthDelimited).bytes(message.image);
+        /* Status status = 3; */
+        if (message.status !== 0)
+            writer.tag(3, WireType.Varint).int32(message.status);
+        /* map<string, User> users = 4; */
+        for (let k of Object.keys(message.users)) {
+            writer.tag(4, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            User.internalBinaryWrite(message.users[k], writer, options);
+            writer.join().join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -236,11 +316,13 @@ class User$Type extends MessageType<User> {
         super("User", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "age", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "age", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
     create(value?: PartialMessage<User>): User {
-        const message = { name: "", email: "", age: 0 };
+        const message = { name: "", email: "", age: 0, active: false, amount: 0n };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<User>(this, message, value);
@@ -259,6 +341,12 @@ class User$Type extends MessageType<User> {
                     break;
                 case /* int32 age */ 3:
                     message.age = reader.int32();
+                    break;
+                case /* bool active */ 4:
+                    message.active = reader.bool();
+                    break;
+                case /* int64 amount */ 5:
+                    message.amount = reader.int64().toBigInt();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -281,6 +369,12 @@ class User$Type extends MessageType<User> {
         /* int32 age = 3; */
         if (message.age !== 0)
             writer.tag(3, WireType.Varint).int32(message.age);
+        /* bool active = 4; */
+        if (message.active !== false)
+            writer.tag(4, WireType.Varint).bool(message.active);
+        /* int64 amount = 5; */
+        if (message.amount !== 0n)
+            writer.tag(5, WireType.Varint).int64(message.amount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
