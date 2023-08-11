@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import type { CreateUserResponse, User } from '../../pb/example';
+import type { CreateUserResponse, User } from '../../../pb/example';
 
 export const handlers = [
     rest.post('/getUser', (req, res, ctx) => {
