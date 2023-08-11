@@ -6,12 +6,17 @@ export const handlers = [
         return res(ctx.status(200), ctx.json<User>({
             name: '',
             email: '',
-            age: 0
+            age: 0,
+            active: false,
+            amount: 0n
         }));
     }),
     rest.post('/createuser', (req, res, ctx) => {
         return res(ctx.status(200), ctx.json<CreateUserResponse>({
-            message: ''
+            message: '',
+            image: new Uint8Array(),
+            status: 0,
+            users: {}
         }));
     })
 ];

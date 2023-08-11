@@ -16,12 +16,23 @@ message CreateUserRequest {
   int32 age = 4;
 }
 
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_OK = 1;
+  STATUS_ERROR = 2;
+}
+
 message CreateUserResponse {
   string message = 1;
+  bytes image = 2;
+  Status status = 3;
+  map<string, User> users = 4;
 }
 
 message User {
-    string name = 1;
-    string email = 2;
-    int32 age = 3;
+  string name = 1;
+  string email = 2;
+  int32 age = 3;
+  bool active = 4;
+  int64 amount = 5;
 }
