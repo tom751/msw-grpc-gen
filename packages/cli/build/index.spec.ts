@@ -19,6 +19,6 @@ describe('generateIndexFile', () => {
   it('generates index.ts correctly', async () => {
     const createdFiles = ['example', 'test', 'hey']
     const result = generateIndexFile(createdFiles)
-    expect(result).toMatchFileSnapshot('./snapshots/generatedIndexFile.snapshot.ts')
+    expect(result).toMatchFileSnapshot('./snapshots/generateIndexFile.snapshot.ts')
   })
 })
