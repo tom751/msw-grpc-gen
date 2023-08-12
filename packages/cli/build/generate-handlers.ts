@@ -1,6 +1,7 @@
 import path from 'path'
 import ts, { factory } from 'typescript'
 import { ServiceEndpoint } from '../parse'
+import { createNewLine } from '../utils/build'
 import { getObjectAstPlaceholder } from './object'
 
 /**
@@ -19,14 +20,6 @@ export function getHandlersAST(
   const mswImportDec = createMswImportDec()
   const responseTypeImportDecs = createResponseTypeImportDecs(serviceEndpoints, outDirPath)
   return factory.createNodeArray([mswImportDec, ...responseTypeImportDecs, createNewLine(), handlers])
-}
-
-/**
- * Creates and returns an AST node for an empty line
- * @returns Empty line AST node
- */
-function createNewLine(): ts.Identifier {
-  return ts.factory.createIdentifier('\n')
 }
 
 /**

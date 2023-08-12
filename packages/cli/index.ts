@@ -2,7 +2,7 @@ import { program } from 'commander'
 import fs from 'fs'
 import path from 'path'
 import ts from 'typescript'
-import { generateHandlers } from './build'
+import { generateHandlers, generateIndexFile } from './build'
 import { getFilename } from './utils/files'
 
 program
@@ -36,6 +36,8 @@ const tsOpts: ts.CompilerOptions = {
 const host = ts.createCompilerHost(tsOpts, true)
 const prog = ts.createProgram(clientFiles, tsOpts, host)
 
+const createdFiles: string[] = []
+
 for (const file of clientFiles) {
   const output = generateHandlers(file, out, prog)
   if (!output) {
@@ -47,4 +49,9 @@ for (const file of clientFiles) {
   const outputDir = path.join(__dirname, options.out, mockFilename)
 
   fs.writeFileSync(outputDir, output)
+  createdFiles.push(fileName)
 }
+
+const indexFile = generateIndexFile(createdFiles)
+const outputDir = path.join(__dirname, options.out, 'index.ts')
+fs.writeFileSync(outputDir, indexFile)
