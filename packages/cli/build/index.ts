@@ -1,6 +1,7 @@
 import ts from 'typescript'
 import { findClientInterface, getReturnTypeImports, getServiceEndpoints } from '../parse'
-import { getHandlersAST } from './handlers'
+import { getHandlersAST } from './generate-handlers'
+import { getIndexAST } from './generate-index'
 
 /**
  * Generate MSW handlers for specific GRPC client
@@ -32,4 +33,17 @@ export function generateHandlers(filepath: string, outDirPath: string, prog: ts.
   const printer = ts.createPrinter()
 
   return printer.printList(ts.ListFormat.MultiLine, nodes, mockFile)
+}
+
+/**
+ * Generate an index.ts file which exports all handlers
+ * @param createdFiles The filenames that were generated containing handlers
+ * @returns String content of the index.ts file
+ */
+export function generateIndexFile(createdFiles: string[]): string {
+  const indexFile = ts.createSourceFile('index.ts', '', ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS)
+  const nodes = getIndexAST(createdFiles)
+
+  const printer = ts.createPrinter()
+  return printer.printList(ts.ListFormat.MultiLine, nodes, indexFile)
 }

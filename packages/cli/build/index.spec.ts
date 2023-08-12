@@ -1,5 +1,5 @@
 import ts from 'typescript'
-import { generateHandlers } from '.'
+import { generateHandlers, generateIndexFile } from '.'
 
 describe('generateHandlers', () => {
   it('generates handlers correctly', async () => {
@@ -12,5 +12,13 @@ describe('generateHandlers', () => {
 
     const result = generateHandlers(file, '../example/src/mocks/gen', prog)
     await expect(result).toMatchFileSnapshot('./snapshots/generateHandlers.snapshot.ts')
+  })
+})
+
+describe('generateIndexFile', () => {
+  it('generates index.ts correctly', async () => {
+    const createdFiles = ['example', 'test', 'hey']
+    const result = generateIndexFile(createdFiles)
+    expect(result).toMatchFileSnapshot('./snapshots/generatedIndexFile.snapshot.ts')
   })
 })
