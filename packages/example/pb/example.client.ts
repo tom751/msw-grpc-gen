@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { UserService } from "./example";
+import type { Address } from "./example_dep";
+import type { GetUserAddressRequest } from "./example";
 import type { CreateUserResponse } from "./example";
 import type { CreateUserRequest } from "./example";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -23,6 +25,10 @@ export interface IUserServiceClient {
      * @generated from protobuf rpc: Createuser(CreateUserRequest) returns (CreateUserResponse);
      */
     createuser(input: CreateUserRequest, options?: RpcOptions): UnaryCall<CreateUserRequest, CreateUserResponse>;
+    /**
+     * @generated from protobuf rpc: GetUserAddress(GetUserAddressRequest) returns (Address);
+     */
+    getUserAddress(input: GetUserAddressRequest, options?: RpcOptions): UnaryCall<GetUserAddressRequest, Address>;
 }
 /**
  * @generated from protobuf service UserService
@@ -46,5 +52,12 @@ export class UserServiceClient implements IUserServiceClient, ServiceInfo {
     createuser(input: CreateUserRequest, options?: RpcOptions): UnaryCall<CreateUserRequest, CreateUserResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateUserRequest, CreateUserResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: GetUserAddress(GetUserAddressRequest) returns (Address);
+     */
+    getUserAddress(input: GetUserAddressRequest, options?: RpcOptions): UnaryCall<GetUserAddressRequest, Address> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetUserAddressRequest, Address>("unary", this._transport, method, opt, input);
     }
 }

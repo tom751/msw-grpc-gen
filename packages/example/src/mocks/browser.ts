@@ -26,6 +26,8 @@ const handlers = [
         age: 233,
         email: 'a@a.com',
         name: 'Bobby',
+        active: true,
+        amount: 20n,
       }),
     )
 

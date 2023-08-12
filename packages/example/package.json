@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev:server": "tsx watch server.ts",
-    "gen": "protoc --ts_opt server_grpc1 --ts_out ./pb --proto_path . example.proto",
+    "gen": "protoc --ts_opt server_grpc1 --ts_out ./pb --proto_path . example.proto example_dep.proto",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"

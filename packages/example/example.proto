@@ -1,8 +1,11 @@
 syntax = "proto3";
 
+import "example_dep.proto";
+
 service UserService {
   rpc GetUser (GetUserRequest) returns (User);
   rpc Createuser (CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUserAddress (GetUserAddressRequest) returns (Address);
 }
 
 message GetUserRequest {
@@ -14,6 +17,10 @@ message CreateUserRequest {
   string second_name = 2;
   string email = 3;
   int32 age = 4;
+}
+
+message GetUserAddressRequest {
+  string name = 1;
 }
 
 enum Status {
@@ -35,4 +42,5 @@ message User {
   int32 age = 3;
   bool active = 4;
   int64 amount = 5;
+  Address address = 6;
 }

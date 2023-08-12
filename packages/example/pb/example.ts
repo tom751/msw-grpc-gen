@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Address } from "./example_dep";
 /**
  * @generated from protobuf message GetUserRequest
  */
@@ -41,6 +42,15 @@ export interface CreateUserRequest {
      * @generated from protobuf field: int32 age = 4;
      */
     age: number;
+}
+/**
+ * @generated from protobuf message GetUserAddressRequest
+ */
+export interface GetUserAddressRequest {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
 }
 /**
  * @generated from protobuf message CreateUserResponse
@@ -89,6 +99,10 @@ export interface User {
      * @generated from protobuf field: int64 amount = 5;
      */
     amount: bigint;
+    /**
+     * @generated from protobuf field: Address address = 6;
+     */
+    address?: Address;
 }
 /**
  * @generated from protobuf enum Status
@@ -223,6 +237,53 @@ class CreateUserRequest$Type extends MessageType<CreateUserRequest> {
  */
 export const CreateUserRequest = new CreateUserRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class GetUserAddressRequest$Type extends MessageType<GetUserAddressRequest> {
+    constructor() {
+        super("GetUserAddressRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetUserAddressRequest>): GetUserAddressRequest {
+        const message = { name: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<GetUserAddressRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetUserAddressRequest): GetUserAddressRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetUserAddressRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message GetUserAddressRequest
+ */
+export const GetUserAddressRequest = new GetUserAddressRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreateUserResponse$Type extends MessageType<CreateUserResponse> {
     constructor() {
         super("CreateUserResponse", [
@@ -318,7 +379,8 @@ class User$Type extends MessageType<User> {
             { no: 2, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "age", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 5, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "address", kind: "message", T: () => Address }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -348,6 +410,9 @@ class User$Type extends MessageType<User> {
                 case /* int64 amount */ 5:
                     message.amount = reader.int64().toBigInt();
                     break;
+                case /* Address address */ 6:
+                    message.address = Address.internalBinaryRead(reader, reader.uint32(), options, message.address);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -375,6 +440,9 @@ class User$Type extends MessageType<User> {
         /* int64 amount = 5; */
         if (message.amount !== 0n)
             writer.tag(5, WireType.Varint).int64(message.amount);
+        /* Address address = 6; */
+        if (message.address)
+            Address.internalBinaryWrite(message.address, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -390,5 +458,6 @@ export const User = new User$Type();
  */
 export const UserService = new ServiceType("UserService", [
     { name: "GetUser", options: {}, I: GetUserRequest, O: User },
-    { name: "Createuser", options: {}, I: CreateUserRequest, O: CreateUserResponse }
+    { name: "Createuser", options: {}, I: CreateUserRequest, O: CreateUserResponse },
+    { name: "GetUserAddress", options: {}, I: GetUserAddressRequest, O: Address }
 ]);
