@@ -2,7 +2,7 @@ import { program } from 'commander'
 import fs from 'fs'
 import path from 'path'
 import ts from 'typescript'
-import { generateHandlers, generateIndexFile } from './build'
+import { generateHandlers, generateIndexFile, getHelpersFile } from './build'
 import { getFilename } from './utils/files'
 
 program
@@ -29,6 +29,7 @@ interface Options {
 
 const options = program.opts<Options>()
 const out = path.resolve(options.out)
+const baseOutDir = path.join(__dirname, options.out)
 
 const tsOpts: ts.CompilerOptions = {
   target: ts.ScriptTarget.ESNext,
@@ -46,12 +47,18 @@ for (const file of clientFiles) {
 
   const fileName = getFilename(file)
   const mockFilename = `${fileName}.ts`
-  const outputDir = path.join(__dirname, options.out, mockFilename)
+  const outputDir = path.join(baseOutDir, mockFilename)
 
   fs.writeFileSync(outputDir, output)
   createdFiles.push(fileName)
 }
 
-const indexFile = generateIndexFile(createdFiles)
-const outputDir = path.join(__dirname, options.out, 'index.ts')
-fs.writeFileSync(outputDir, indexFile)
+if (createdFiles.length > 0) {
+  const indexFile = generateIndexFile(createdFiles)
+  const indexOutputDir = path.join(baseOutDir, 'index.ts')
+  fs.writeFileSync(indexOutputDir, indexFile)
+
+  const helpersFile = getHelpersFile()
+  const helpersOutputDir = path.join(baseOutDir, 'helpers.ts')
+  fs.writeFileSync(helpersOutputDir, helpersFile)
+}

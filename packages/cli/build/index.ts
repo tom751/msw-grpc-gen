@@ -1,6 +1,7 @@
 import ts from 'typescript'
 import { findClientInterface, getReturnTypeImports, getServiceEndpoints } from '../parse'
 import { getHandlersAST } from './generate-handlers'
+import { helpersFileContent } from './generate-helpers'
 import { getIndexAST } from './generate-index'
 
 /**
@@ -46,4 +47,12 @@ export function generateIndexFile(createdFiles: string[]): string {
 
   const printer = ts.createPrinter()
   return printer.printList(ts.ListFormat.MultiLine, nodes, indexFile)
+}
+
+/**
+ * Get the string content of the helpers file
+ * @returns String content of the helpers.ts file
+ */
+export function getHelpersFile(): string {
+  return helpersFileContent
 }
