@@ -8,7 +8,7 @@ import ts, { factory } from 'typescript'
  * @returns The constructed object with default values
  */
 export function getObjectPlaceholder(type: ts.Type, checker: ts.TypeChecker): Object {
-  const result = {}
+  const result: Record<string, unknown> = {}
 
   for (const prop of type.getProperties()) {
     const propType = checker.getTypeOfSymbol(prop)

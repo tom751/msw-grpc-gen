@@ -16,10 +16,13 @@ export function getHandlersAST(
   outDirPath: string,
   checker: ts.TypeChecker,
 ): ts.NodeArray<ts.Node> {
-  const handlers = createHandlers(serviceEndpoints, checker)
-  const mswImportDec = createMswImportDec()
-  const responseTypeImportDecs = createResponseTypeImportDecs(serviceEndpoints, outDirPath)
-  return factory.createNodeArray([mswImportDec, ...responseTypeImportDecs, createNewLine(), handlers])
+  return factory.createNodeArray([
+    createMswImportDec(),
+    ...createResponseTypeImportDecs(serviceEndpoints, outDirPath),
+    createHelperImport(),
+    createNewLine(),
+    createHandlers(serviceEndpoints, checker),
+  ])
 }
 
 /**
@@ -35,6 +38,24 @@ function createMswImportDec(): ts.ImportDeclaration {
       factory.createNamedImports([factory.createImportSpecifier(false, undefined, factory.createIdentifier('rest'))]),
     ),
     factory.createStringLiteral('msw', true),
+  )
+}
+
+/**
+ * Create an ImportDeclaration for helpers
+ * @returns ImportDeclaration for importing helper functions
+ */
+function createHelperImport(): ts.ImportDeclaration {
+  return factory.createImportDeclaration(
+    undefined,
+    factory.createImportClause(
+      false,
+      undefined,
+      factory.createNamedImports([
+        factory.createImportSpecifier(false, undefined, factory.createIdentifier('getResultAsString')),
+      ]),
+    ),
+    factory.createStringLiteral('./helpers', true),
   )
 }
 
@@ -66,7 +87,7 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
       factory.createImportDeclaration(
         undefined,
         factory.createImportClause(
-          true,
+          false,
           undefined,
           factory.createNamedImports(
             dedupedTypes.map((t) => factory.createImportSpecifier(false, undefined, factory.createIdentifier(t))),
@@ -92,6 +113,17 @@ function createHandlers(serviceEndpoints: ServiceEndpoint[], checker: ts.TypeChe
       const propertyAccessExpression = factory.createPropertyAccessExpression(factory.createIdentifier('rest'), 'post')
       const responseArgumentsArray = se.resTypeNode ? [getObjectAstPlaceholder(se.resTypeNode, checker)] : []
 
+      const responseObject = factory.createCallExpression(
+        factory.createPropertyAccessExpression(factory.createIdentifier(se.resTypeName), 'toBinary'),
+        undefined,
+        responseArgumentsArray,
+      )
+      const responseObjectEncoded = factory.createCallExpression(
+        factory.createIdentifier('getResultAsString'),
+        undefined,
+        [responseObject],
+      )
+
       const functionBody = factory.createBlock(
         [
           factory.createReturnStatement(
@@ -102,9 +134,17 @@ function createHandlers(serviceEndpoints: ServiceEndpoint[], checker: ts.TypeChe
                 [factory.createNumericLiteral(200)],
               ),
               factory.createCallExpression(
-                factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'json'),
-                [factory.createTypeReferenceNode(se.resTypeName)],
-                responseArgumentsArray,
+                factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'body'),
+                undefined,
+                [responseObjectEncoded],
+              ),
+              factory.createCallExpression(
+                factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'set'),
+                undefined,
+                [
+                  factory.createStringLiteral('Content-Type', true),
+                  factory.createStringLiteral('application/grpc-web-text', true),
+                ],
               ),
             ]),
           ),
@@ -116,7 +156,7 @@ function createHandlers(serviceEndpoints: ServiceEndpoint[], checker: ts.TypeChe
         undefined,
         undefined,
         [
-          factory.createParameterDeclaration(undefined, undefined, 'req', undefined),
+          factory.createParameterDeclaration(undefined, undefined, '_req', undefined),
           factory.createParameterDeclaration(undefined, undefined, 'res', undefined),
           factory.createParameterDeclaration(undefined, undefined, 'ctx', undefined),
         ],
