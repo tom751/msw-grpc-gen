@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "scripts": {
     "lint": "rome check . && rome format . --write",
     "lint:ci": "rome ci .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm t --workspaces --if-present"
   },
   "devDependencies": {
