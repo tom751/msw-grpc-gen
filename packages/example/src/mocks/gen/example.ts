@@ -3,7 +3,7 @@ import { CreateUserResponse, User } from '../../../pb/example';
 import { Address } from '../../../pb/example_dep';
 import { getResultAsString } from './helpers';
 
-export const handlers = [
+export const exampleHandlers = [
     rest.post('/getUser', (_req, res, ctx) => {
         return res(ctx.status(200), ctx.body(getResultAsString(User.toBinary({
             name: '',

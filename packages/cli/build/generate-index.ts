@@ -52,11 +52,7 @@ function createImportDec(fileName: string): ts.ImportDeclaration {
       false,
       undefined,
       factory.createNamedImports([
-        factory.createImportSpecifier(
-          false,
-          factory.createIdentifier('handlers'),
-          factory.createIdentifier(getImportAlias(fileName)),
-        ),
+        factory.createImportSpecifier(false, undefined, factory.createIdentifier(getImportAlias(fileName))),
       ]),
     ),
     factory.createStringLiteral(`./${fileName}`, true),
