@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "tsx index.ts -o ../example/src/mocks/gen ../example/pb/**.client.ts",
     "test": "vitest",
