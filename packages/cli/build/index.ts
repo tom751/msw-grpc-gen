@@ -1,5 +1,6 @@
 import ts from 'typescript'
 import { findClientInterface, getReturnTypeImports, getServiceEndpoints } from '../parse'
+import { getFilename } from '../utils/files'
 import { getHandlersAST } from './generate-handlers'
 import { helpersFileContent } from './generate-helpers'
 import { getIndexAST } from './generate-index'
@@ -28,7 +29,9 @@ export function generateHandlers(filepath: string, outDirPath: string, prog: ts.
 
   const serviceEndpoints = getServiceEndpoints(clientInterface, checker)
   const endPointsWithTypePaths = getReturnTypeImports(serviceEndpoints, sourceFile)
-  const nodes = getHandlersAST(endPointsWithTypePaths, outDirPath, checker)
+
+  const handlerVariableName = `${getFilename(filepath)}Handlers`
+  const nodes = getHandlersAST(endPointsWithTypePaths, outDirPath, checker, handlerVariableName)
 
   const mockFile = ts.createSourceFile('service-file', '', ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS)
   const printer = ts.createPrinter()

@@ -9,19 +9,21 @@ import { getObjectAstPlaceholder } from './object'
  * @param serviceEndpoints The GRPC endpoints
  * @param outDirPath The path to the folder the files are being output to
  * @param checker Type checker
+ * @param handlerVariableName The name of the variable that exports the handlers
  * @returns AST to print
  */
 export function getHandlersAST(
   serviceEndpoints: ServiceEndpoint[],
   outDirPath: string,
   checker: ts.TypeChecker,
+  handlerVariableName: string,
 ): ts.NodeArray<ts.Node> {
   return factory.createNodeArray([
     createMswImportDec(),
     ...createResponseTypeImportDecs(serviceEndpoints, outDirPath),
     createHelperImport(),
     createNewLine(),
-    createHandlers(serviceEndpoints, checker),
+    createHandlers(serviceEndpoints, checker, handlerVariableName),
   ])
 }
 
@@ -105,9 +107,14 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
  * Creates and returns an AST node for an MSW handler array for GRPC endpoints
  * @param serviceEndpoints An array of GRPC endpoints to create MSW handlers for
  * @param checker Type checker
+ * @param handlerVariableName The name of the variable that exports the handlers
  * @returns VariableStatement AST node of a handler array
  */
-function createHandlers(serviceEndpoints: ServiceEndpoint[], checker: ts.TypeChecker): ts.VariableStatement {
+function createHandlers(
+  serviceEndpoints: ServiceEndpoint[],
+  checker: ts.TypeChecker,
+  handlerVariableName: string,
+): ts.VariableStatement {
   const handlerArray = factory.createArrayLiteralExpression(
     serviceEndpoints.map((se) => {
       const propertyAccessExpression = factory.createPropertyAccessExpression(factory.createIdentifier('rest'), 'post')
@@ -173,7 +180,12 @@ function createHandlers(serviceEndpoints: ServiceEndpoint[], checker: ts.TypeChe
     true,
   )
 
-  const handlerVariableDeclaration = factory.createVariableDeclaration('handlers', undefined, undefined, handlerArray)
+  const handlerVariableDeclaration = factory.createVariableDeclaration(
+    handlerVariableName,
+    undefined,
+    undefined,
+    handlerArray,
+  )
   const handlerDeclarationList = factory.createVariableDeclarationList([handlerVariableDeclaration], ts.NodeFlags.Const)
 
   return factory.createVariableStatement([factory.createModifier(ts.SyntaxKind.ExportKeyword)], handlerDeclarationList)
