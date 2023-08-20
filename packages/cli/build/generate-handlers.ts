@@ -10,6 +10,7 @@ import { getObjectAstPlaceholder } from './object'
  * @param outDirPath The path to the folder the files are being output to
  * @param checker Type checker
  * @param handlerVariableName The name of the variable that exports the handlers
+ * @param baseUrl The base url for the handler paths
  * @returns AST to print
  */
 export function getHandlersAST(
@@ -17,13 +18,14 @@ export function getHandlersAST(
   outDirPath: string,
   checker: ts.TypeChecker,
   handlerVariableName: string,
+  baseUrl: string,
 ): ts.NodeArray<ts.Node> {
   return factory.createNodeArray([
     createMswImportDec(),
     ...createResponseTypeImportDecs(serviceEndpoints, outDirPath),
     createHelperImport(),
     createNewLine(),
-    createHandlers(serviceEndpoints, checker, handlerVariableName),
+    createHandlers(serviceEndpoints, checker, handlerVariableName, baseUrl),
   ])
 }
 
@@ -108,12 +110,14 @@ function createResponseTypeImportDecs(serviceEndpoints: ServiceEndpoint[], outDi
  * @param serviceEndpoints An array of GRPC endpoints to create MSW handlers for
  * @param checker Type checker
  * @param handlerVariableName The name of the variable that exports the handlers
+ * @param baseUrl The base url for the handler paths
  * @returns VariableStatement AST node of a handler array
  */
 function createHandlers(
   serviceEndpoints: ServiceEndpoint[],
   checker: ts.TypeChecker,
   handlerVariableName: string,
+  baseUrl: string,
 ): ts.VariableStatement {
   const handlerArray = factory.createArrayLiteralExpression(
     serviceEndpoints.map((se) => {
@@ -172,7 +176,12 @@ function createHandlers(
         functionBody,
       )
       // might have to capitalize name
-      const args = [factory.createStringLiteral(`/${se.name}`, true), functionHandler]
+      let handlerPath = `/${se.name}`
+      if (baseUrl) {
+        handlerPath = baseUrl.endsWith('/') ? `${baseUrl}${se.name}` : `${baseUrl}/${se.name}`
+      }
+
+      const args = [factory.createStringLiteral(handlerPath, true), functionHandler]
       const callExpression = factory.createCallExpression(propertyAccessExpression, undefined, args)
 
       return callExpression

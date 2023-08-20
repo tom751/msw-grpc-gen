@@ -10,6 +10,7 @@ program
   .description('Generate MSW handlers from protobuf-ts generated client endpoints')
   .argument('path to client', 'path or glob to protobuf-ts generated clients')
   .requiredOption('-o, --out <string>', 'path to output generated msw handlers')
+  .option('-b, --base-url <string>', 'the base url for the handler paths', '')
   .parse()
 
 if (program.args.length < 1) {
@@ -25,6 +26,7 @@ if (clientFiles.length === 0) {
 
 interface Options {
   out: string
+  baseUrl: string
 }
 
 const options = program.opts<Options>()
@@ -39,13 +41,13 @@ const prog = ts.createProgram(clientFiles, tsOpts, host)
 
 const createdFiles: string[] = []
 
-for (const file of clientFiles) {
-  const output = generateHandlers(file, out, prog)
+for (const filepath of clientFiles) {
+  const output = generateHandlers({ filepath, outDirPath: out, prog, baseUrl: options.baseUrl })
   if (!output) {
     continue
   }
 
-  const fileName = getFilename(file)
+  const fileName = getFilename(filepath)
   const mockFilename = `${fileName}.ts`
   const outputDir = path.join(baseOutDir, mockFilename)
 

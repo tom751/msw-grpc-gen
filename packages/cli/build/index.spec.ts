@@ -10,8 +10,25 @@ describe('generateHandlers', () => {
     const host = ts.createCompilerHost(tsOpts, true)
     const prog = ts.createProgram([file], tsOpts, host)
 
-    const result = generateHandlers(file, '../example/src/mocks/gen', prog)
+    const result = generateHandlers({ filepath: file, outDirPath: '../example/src/mocks/gen', prog, baseUrl: '' })
     await expect(result).toMatchFileSnapshot('./snapshots/generateHandlers.snapshot.ts')
+  })
+
+  it('generates handlers correctly with a base url', async () => {
+    const file = '../example/pb/example.client.ts'
+    const tsOpts: ts.CompilerOptions = {
+      target: ts.ScriptTarget.ESNext,
+    }
+    const host = ts.createCompilerHost(tsOpts, true)
+    const prog = ts.createProgram([file], tsOpts, host)
+
+    const result = generateHandlers({
+      filepath: file,
+      outDirPath: '../example/src/mocks/gen',
+      prog,
+      baseUrl: 'https://my-website.com/api',
+    })
+    await expect(result).toMatchFileSnapshot('./snapshots/generateHandlers-base-url.snapshot.ts')
   })
 })
 
