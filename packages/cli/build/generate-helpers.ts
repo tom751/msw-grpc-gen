@@ -1,8 +1,8 @@
-export const helpersFileContent = `
-import { GrpcStatusCode, GrpcWebFrame } from '@protobuf-ts/grpcweb-transport'
+export const helpersFileContent = `import { GrpcStatusCode, GrpcWebFrame } from '@protobuf-ts/grpcweb-transport'
 import { base64encode } from '@protobuf-ts/runtime'
+import { compose, context } from 'msw'
 
-export function getResultAsString(data: Uint8Array, status: GrpcStatusCode = GrpcStatusCode.OK): string {
+export function grpcResponse(data: Uint8Array, status: GrpcStatusCode = GrpcStatusCode.OK) {
   // https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md
   // length-prefixed message framing https://www.oreilly.com/library/view/grpc-up-and/9781492058328/ch04.html
   const trailer = Buffer.from(\`grpc-status:\${status}\`)
@@ -14,7 +14,12 @@ export function getResultAsString(data: Uint8Array, status: GrpcStatusCode = Grp
     new Uint8Array([0, 0, 0, trailer.length]),
     trailer,
   ])
-  return base64encode(result)
-}
+  const body = base64encode(result)
 
+  return compose(
+    context.set('Content-Type', 'application/grpc-web-text'),
+    context.status(200),
+    context.body(body),
+  )
+}
 `

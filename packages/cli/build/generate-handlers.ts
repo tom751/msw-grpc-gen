@@ -56,7 +56,7 @@ function createHelperImport(): ts.ImportDeclaration {
       false,
       undefined,
       factory.createNamedImports([
-        factory.createImportSpecifier(false, undefined, factory.createIdentifier('getResultAsString')),
+        factory.createImportSpecifier(false, undefined, factory.createIdentifier('grpcResponse')),
       ]),
     ),
     factory.createStringLiteral('./helpers', true),
@@ -129,34 +129,12 @@ function createHandlers(
         undefined,
         responseArgumentsArray,
       )
-      const responseObjectEncoded = factory.createCallExpression(
-        factory.createIdentifier('getResultAsString'),
-        undefined,
-        [responseObject],
-      )
 
       const functionBody = factory.createBlock(
         [
           factory.createReturnStatement(
             factory.createCallExpression(factory.createIdentifier('res'), undefined, [
-              factory.createCallExpression(
-                factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'status'),
-                undefined,
-                [factory.createNumericLiteral(200)],
-              ),
-              factory.createCallExpression(
-                factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'body'),
-                undefined,
-                [responseObjectEncoded],
-              ),
-              factory.createCallExpression(
-                factory.createPropertyAccessExpression(factory.createIdentifier('ctx'), 'set'),
-                undefined,
-                [
-                  factory.createStringLiteral('Content-Type', true),
-                  factory.createStringLiteral('application/grpc-web-text', true),
-                ],
-              ),
+              factory.createCallExpression(factory.createIdentifier('grpcResponse'), undefined, [responseObject]),
             ]),
           ),
         ],
@@ -169,7 +147,7 @@ function createHandlers(
         [
           factory.createParameterDeclaration(undefined, undefined, '_req', undefined),
           factory.createParameterDeclaration(undefined, undefined, 'res', undefined),
-          factory.createParameterDeclaration(undefined, undefined, 'ctx', undefined),
+          factory.createParameterDeclaration(undefined, undefined, '_ctx', undefined),
         ],
         undefined,
         factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
