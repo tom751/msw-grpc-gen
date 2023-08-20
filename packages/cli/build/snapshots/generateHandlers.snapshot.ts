@@ -1,11 +1,11 @@
 import { rest } from 'msw';
 import { CreateUserResponse, User } from '../../../pb/example';
 import { Address } from '../../../pb/example_dep';
-import { getResultAsString } from './helpers';
+import { grpcResponse } from './helpers';
 
 export const exampleHandlers = [
-    rest.post('/getUser', (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.body(getResultAsString(User.toBinary({
+    rest.post('/getUser', (_req, res, _ctx) => {
+        return res(grpcResponse(User.toBinary({
             name: '',
             email: '',
             age: 0,
@@ -18,23 +18,23 @@ export const exampleHandlers = [
                 country: '',
                 postCode: ''
             }
-        }))), ctx.set('Content-Type', 'application/grpc-web-text'));
+        })));
     }),
-    rest.post('/createuser', (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.body(getResultAsString(CreateUserResponse.toBinary({
+    rest.post('/createuser', (_req, res, _ctx) => {
+        return res(grpcResponse(CreateUserResponse.toBinary({
             message: '',
             image: new Uint8Array(),
             status: 0,
             users: {}
-        }))), ctx.set('Content-Type', 'application/grpc-web-text'));
+        })));
     }),
-    rest.post('/getUserAddress', (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.body(getResultAsString(Address.toBinary({
+    rest.post('/getUserAddress', (_req, res, _ctx) => {
+        return res(grpcResponse(Address.toBinary({
             firstLine: '',
             secondLine: '',
             town: '',
             country: '',
             postCode: ''
-        }))), ctx.set('Content-Type', 'application/grpc-web-text'));
+        })));
     })
 ];
