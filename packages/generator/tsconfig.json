@@ -5,10 +5,12 @@
     "target": "ES2022",
     "strict": true,
     "allowSyntheticDefaultImports": true,
+    "types": ["vitest/globals"],
     "skipLibCheck": true,
     "noEmit": true
   },
   "exclude": [
     "node_modules",
+    "build/snapshots"
   ]
 }
