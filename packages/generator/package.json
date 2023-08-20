@@ -1,19 +1,17 @@
 {
-  "name": "cli",
+  "name": "generator",
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "start": "tsx index.ts -o ../example/src/mocks/gen ../example/pb/**.client.ts",
+    "test": "vitest",
     "typecheck": "tsc --project tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^20.4.5",
-    "tsx": "^3.12.7",
-    "typescript": "^5.1.6"
-  },
-  "dependencies": {
-    "commander": "^11.0.0"
+    "typescript": "^5.1.6",
+    "vite": "^4.4.7",
+    "vitest": "^0.33.0"
   }
 }
