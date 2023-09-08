@@ -97,7 +97,7 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
         initializer = factory.createFalse()
         break
       case ts.SyntaxKind.ArrayType:
-        factory.createArrayLiteralExpression(defaultVal)
+        initializer = factory.createArrayLiteralExpression(defaultVal)
         break
     }
 
