@@ -20,7 +20,7 @@ const client = new UserServiceClient(transport)
 if (fetchButton) {
   fetchButton.addEventListener('click', () => {
     client.getUser({ name: 'bob' }).then(({ response }) => {
-      // rome-ignore lint/style/noNonNullAssertion: trust me
+      // biome-ignore lint/style/noNonNullAssertion: trust me
       pre!.innerText = JSON.stringify(response, (_k, v) => (typeof v === 'bigint' ? v.toString() : v), 2)
     })
   })
