@@ -107,7 +107,7 @@ export function getObjectAstPlaceholder(type: ts.Type, checker: ts.TypeChecker):
   return factory.createObjectLiteralExpression(properties, true)
 }
 
-// rome-ignore lint/suspicious/noExplicitAny: This can return any type
+// biome-ignore lint/suspicious/noExplicitAny: This can return any type
 const defaultVals: Record<number, any> = {
   [ts.SyntaxKind.StringKeyword]: '',
   [ts.SyntaxKind.NumberKeyword]: 0,
